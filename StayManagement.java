@@ -5,7 +5,7 @@ import java.util.*;
 public class StayManagement {
     private final Map<Integer, Stay> stays = new HashMap<>();
     private int maxStayId = 0;
-    private final String fileName = "D:\\stays.csv";
+    private final String fileName = "stays.csv";
 
     private final RoomManagement roomMgmt;
     private final CustomerManagement custMgmt;

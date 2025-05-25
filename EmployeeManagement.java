@@ -4,7 +4,7 @@ import java.util.*;
 public class EmployeeManagement {
     private final Map<Integer, Employee> employees = new HashMap<>();
     private int maxEmployeeId = 0;
-    private final String fileName = "D:\\employees.csv";
+    private final String fileName = "employees.csv";
 
     public EmployeeManagement() {
         loadEmployees();

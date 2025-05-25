@@ -4,7 +4,7 @@ import java.util.*;
 public class RoomManagement {
     private final Map<Integer, Room> rooms = new HashMap<>();
     private int maxRoomNumber = 0;
-    private final String fileName = "D:\\rooms.csv";
+    private final String fileName = "rooms.csv";
 
     public RoomManagement() {
         loadRooms();

@@ -5,7 +5,7 @@ public class CustomerManagement {
     private final Map<Integer, Customer> customers = new HashMap<>();
     private final Map<String, Customer> cnicMap = new HashMap<>();
     private int maxCustomerId = 0;
-    private final String fileName = "D:\\customers.csv";
+    private final String fileName = "customers.csv";
 
     public CustomerManagement() {
         loadCustomers();
