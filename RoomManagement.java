@@ -4,25 +4,27 @@ import java.util.*;
 public class RoomManagement {
     private final Map<Integer, Room> rooms = new HashMap<>();
     private int maxRoomNumber = 0;
-    private final String fileName = "rooms.csv";
+    private final String roomFileName = "rooms.csv";
+    private final String priceFileName = "room_prices.csv";
 
     public RoomManagement() {
+        loadRoomTypePrices();
         loadRooms();
     }
 
-    public boolean addRoom(int number, Room.RoomType type, double price) {
+    
+    public boolean addRoom(int number, Room.RoomType type) {
         if(rooms.containsKey(number)) return false;
-        rooms.put(number, new Room(number, type, price, true));
+        rooms.put(number, new Room(number, type, true));
         if(number > maxRoomNumber) maxRoomNumber = number;
         saveRooms();
         return true;
     }
 
-    public boolean updateRoom(int number, Room.RoomType type, double price) {
+    public boolean updateRoom(int number, Room.RoomType type) {
         Room r = rooms.get(number);
         if(r == null) return false;
         r.setRoomType(type);
-        r.setPrice(price);
         saveRooms();
         return true;
     }
@@ -42,14 +44,9 @@ public class RoomManagement {
     }
 
     public void updatePriceByCategory(Room.RoomType type, double newPrice) {
-        boolean changed = false;
-        for(Room r : rooms.values()) {
-            if(r.getRoomType() == type) {
-                r.setPrice(newPrice);
-                changed = true;
-            }
-        }
-        if(changed) saveRooms();
+        type.setPrice(newPrice);
+        saveRooms();
+        saveRoomTypePrices();
     }
 
     public List<Room> getAvailableRooms() {
@@ -62,18 +59,17 @@ public class RoomManagement {
 
     private void loadRooms() {
         rooms.clear();
-        File file = new File(fileName);
+        File file = new File(roomFileName);
         if(!file.exists()) return;
         try(BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if(parts.length >= 4) {
+                if(parts.length >= 3) {
                     int num = Integer.parseInt(parts[0]);
                     Room.RoomType type = Room.RoomType.valueOf(parts[1]);
-                    double price = Double.parseDouble(parts[2]);
-                    boolean available = Boolean.parseBoolean(parts[3]);
-                    Room r = new Room(num, type, price, available);
+                    boolean available = Boolean.parseBoolean(parts[2]);
+                    Room r = new Room(num, type, available);
                     rooms.put(num, r);
                     if(num > maxRoomNumber) maxRoomNumber = num;
                 }
@@ -84,12 +80,39 @@ public class RoomManagement {
     }
 
     public void saveRooms() {
-        try(PrintWriter pw = new PrintWriter(new FileWriter(fileName))) {
+        try(PrintWriter pw = new PrintWriter(new FileWriter(roomFileName))) {
             for(Room r : rooms.values()) {
-                pw.printf("%d,%s,%.2f,%b%n", r.getRoomNumber(), r.getRoomType().name(), r.getPrice(), r.isAvailable());
+                pw.printf("%d,%s,%b%n", r.getRoomNumber(), r.getRoomType().name(), r.isAvailable());
             }
         } catch (Exception e) {
             System.out.println("Error saving rooms: "+e.getMessage());
+        }
+    }
+    public void saveRoomTypePrices() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(priceFileName))) {
+            for (Room.RoomType type : Room.RoomType.values()) {
+                pw.printf("%s,%.2f%n", type.name(), type.getPrice());
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving room type prices: " + e.getMessage());
+        }
+    }
+
+    public void loadRoomTypePrices() {
+        File file = new File(priceFileName);
+        if (!file.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    Room.RoomType type = Room.RoomType.valueOf(parts[0]);
+                    double price = Double.parseDouble(parts[1]);
+                    type.setPrice(price);
+                }
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            System.out.println("Error loading room type prices: " + e.getMessage());
         }
     }
 }

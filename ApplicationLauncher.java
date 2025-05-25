@@ -89,9 +89,7 @@ public class ApplicationLauncher {
         System.out.print("Enter room number: ");
         int num = readInt();
         Room.RoomType type = readRoomType();
-        System.out.print("Enter price: ");
-        double price = readDouble();
-        boolean added = roomMgmt.addRoom(num, type, price);
+        boolean added = roomMgmt.addRoom(num, type);
         if (added) System.out.println("Room added.");
         else System.out.println("Room number already exists.");
     }
@@ -105,9 +103,7 @@ public class ApplicationLauncher {
             return;
         }
         Room.RoomType type = readRoomType();
-        System.out.print("Enter new price: ");
-        double price = readDouble();
-        roomMgmt.updateRoom(num, type, price);
+        roomMgmt.updateRoom(num, type);
         System.out.println("Room updated.");
     }
 
